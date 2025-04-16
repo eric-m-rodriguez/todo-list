@@ -1,16 +1,10 @@
 import TodoListItem from './TodoListItem.jsx';
 
-function TodoList() {
-  const todos = [
-    { id: 1, title: 'review resources' },
-    { id: 2, title: 'take notes' },
-    { id: 3, title: 'code out app' },
-  ];
+function TodoList({todos}) { //function that creates a list of todos; todos is a prop passed from app.jsx
 
   return (
     <ul>
-      {todos.map((todo) => (
-        <TodoListItem key={todo.id} todo={todo} />))}
+      {todos.map(todo => <TodoListItem key={todo.id} todo={todo} />)}
     </ul>
   );
 }
