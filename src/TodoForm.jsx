@@ -1,27 +1,56 @@
-import { useRef } from 'react'; 
+/**
+ * TodoForm Component
+ * 
+ * Creates a form for users to input and submit new todos.
+ * Implements validation to prevent empty todos.
+ * 
+ * Props: 
+ * - onAddTodo: Function to handle adding a new todo, passed from App.jsx
+ */
+
+import { useState, useEffect, useRef } from 'react'; 
 
 
-function TodoForm({ onAddTodo} ) {/*function that creates a form for adding new todos to the todo list; onAddTodo is a prop passed from App.jsx for handleAddTodo function */
+function TodoForm({ onAddTodo} ) {/* function that creates a form for adding new todos to the todo list; onAddTodo is a prop passed from App.jsx for handleAddTodo function */
 
-    const todoTitleInput = useRef(null); //useRef hook creates a reference to the input field (title) in the form; allows us to access the input field directly without using state
+    // State to track current input value and control the input field
+    const [workingTodo, setWorkingTodo] = useState(''); // creates variable workingTodo with initial value of an empty string; setWorkingTodo function is used to update value of workingTodo
 
-    function handleAddTodo(event){  //function that handles adding new todo to todo list
-        event.preventDefault() //prevents the form from reloading the page when submitted 
+    // Reference to maintain focus on the input field after submitting the form
+    const todoTitleInput = useRef(null); // creates a reference to input field (title) in the form that focuses on the input field after submitting the form
+
+    // Effect focus on the input field when the component mounts or when workingTodo is reset after submitting the form
+    useEffect(() => {
+        todoTitleInput.current.focus(); 
+    }, [workingTodo]); 
+
+    // Handles form submission for adding new todos; prevents empty todos from being added
+    function handleAddTodo(event){  // function that handles adding new todo to todo list
+        event.preventDefault() // prevents the form from reloading the page when submitted 
         
-        const title=event.target.title.value; //variable that stores the value of the input field (title) when form is submitted
-        
-        onAddTodo(title); //holds the value of the input field (title) and passes it to the onAddTodo function (passed from App.jsx) when form is submitted
-        
-        event.target.title.value=''; //resets the title input field to empty after submitting the form
-
-        todoTitleInput.current.focus(); //focuses on the input field (title) after submitting the form without having to click on input form again to maintain focus
+        if (workingTodo.trim()) { // checks if working Todo is not empty or contains whitespace
+            onAddTodo(workingTodo); // calls the onAddTodo function passed from App.jsx and passes workingTodo as an argument to it
+            setWorkingTodo(''); // resets the workingTodo state to an empty string after adding a new todo
         }
+    }
 
-        return (
+    return (
             <form onSubmit={handleAddTodo}> {/* call handleTodo function when form is submitted */}
                 <label htmlFor="todoTitle">Todo</label>
-                <input id="todoTitle" name="title" type="text" ref={todoTitleInput} />
-                <button type ="submit">Add Todo</button>
+                <input 
+                    id="todoTitle" 
+                    name="title" 
+                    type="text" 
+                    ref={todoTitleInput} 
+                    value={workingTodo} //sets the value of the input field to the workingTodo state
+                    onChange={(event) => setWorkingTodo(event.target.value)} //updates workingTodo state with the value of the input field as the user types
+                    />
+                <button 
+                type="submit"
+                disabled={workingTodo=== ''} // disables the button if workingTodo is empty
+                > 
+                    Add Todo
+                </button>
             </form>
         );
     }
